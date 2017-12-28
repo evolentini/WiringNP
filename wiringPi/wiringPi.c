@@ -2334,25 +2334,25 @@ int wiringPiSetup (void)
 
   if (model == NanoPi_M1||model == NanoPi_M1_Plus||model == NanoPi_M1_Plus2)
   {
-    pinToGpio = pinToGpio_m1;
-    physToGpio = physToGpio_m1;
-    physToPin = physToPin_m1;
+    pinToGpio = pinToGpio_m1 ;
+    physToGpio = physToGpio_m1 ;
+    physToPin = physToPin_m1 ;
   }
   else if (model == NanoPi_NEO||model == NanoPi_NEO_Air||model == NanoPi_NEO2 || model == NanoPi_NEO_Plus2)
   {
-    pinToGpio = pinToGpio_neo;
-    physToGpio = physToGpio_neo;
-    physToPin = physToPin_neo;
+    pinToGpio = pinToGpio_neo ;
+    physToGpio = physToGpio_neo ;
+    physToPin = physToPin_neo ;
   }
   else if (model == NanoPi_Duo) 
   {
-    pinToGpio = pinToGpio_duo;
-    physToGpio = physToGpio_duo;
-    physToPin = physToPin_duo;
+    pinToGpio = pinToGpio_duo ;
+    physToGpio = physToGpio_duo ;
+    physToPin = physToPin_duo ;
   }
   else
   {
-    return -1
+    return -1 ;
   }
 
 // Open the master /dev/ memory control device
@@ -2482,21 +2482,21 @@ int wiringPiSetupSys (void)
 
   if (model == NanoPi_M1||model == NanoPi_M1_Plus||model == NanoPi_M1_Plus2)
   {
-    pinToGpio = pinToGpio_m1;
-    physToGpio = physToGpio_m1;
-    physToPin = physToPin_m1;
+    pinToGpio = pinToGpio_m1 ;
+    physToGpio = physToGpio_m1 ;
+    physToPin = physToPin_m1 ;
   }
   else if (model == NanoPi_NEO||model == NanoPi_NEO_Air||model == NanoPi_NEO2||model == NanoPi_NEO_Plus2)
   {
-    pinToGpio = pinToGpio_neo;
-    physToGpio = physToGpio_neo;
-    physToPin = physToPin_neo;
+    pinToGpio = pinToGpio_neo ;
+    physToGpio = physToGpio_neo ;
+    physToPin = physToPin_neo ;
   }
   else if (model == NanoPi_Duo) 
   {
-    pinToGpio = pinToGpio_duo;
-    physToGpio = physToGpio_duo;
-    physToPin = physToPin_duo;
+    pinToGpio = pinToGpio_duo ;
+    physToGpio = physToGpio_duo ;
+    physToPin = physToPin_duo ;
   }
 
 // Open and scan the directory, looking for exported GPIOs, and pre-open
