@@ -1,7 +1,8 @@
 /*
- * pins.c:
- *	Just display a handy Pi pinnout diagram.
- *	Copyright (c) 2012-2017 Gordon Henderson
+ * extensions.h:
+ *	Part of the GPIO program to test, peek, poke and otherwise
+ *	noodle with the GPIO hardware on the Raspberry Pi.
+ *	Copyright (c) 2012-2015 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -22,12 +23,4 @@
  */
 
 
-#include <stdio.h>
-
-void doPins (void)
-{
-  printf ("The pins command has been deprecated - sorry. Please use the\n") ;
-  printf ("  gpio readall\n") ;
-  printf ("command to get a list of the pinnouts for your Pi.\n") ;
-}
-
+extern int loadWPiExtension (char *progName, char *extensionData, int verbose) ;

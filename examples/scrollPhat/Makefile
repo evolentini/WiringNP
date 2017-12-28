@@ -1,10 +1,9 @@
 #
 # Makefile:
-#	The gpio command:
-#	  A swiss-army knige of GPIO shenanigans.
+#	wiringPi - A "wiring" library for the Raspberry Pi
 #	https://projects.drogon.net/wiring-pi
 #
-#	Copyright (c) 2012-2016 Gordon Henderson
+#	Copyright (c) 2012-2015 Gordon Henderson
 #################################################################################
 # This file is part of wiringPi:
 #	A "wiring" library for the Raspberry Pi
@@ -23,74 +22,58 @@
 #    along with wiringPi.  If not, see <http://www.gnu.org/licenses/>.
 #################################################################################
 
-DESTDIR?=/usr
-PREFIX?=/local
-
 ifneq ($V,1)
 Q ?= @
 endif
 
 #DEBUG	= -g -O0
-DEBUG	= -O2
+DEBUG	= -O3
 CC	= gcc
-INCLUDE	= -I$(DESTDIR)$(PREFIX)/include
-CFLAGS	= $(DEBUG) -Wall -Wextra $(INCLUDE) -Winline -pipe
+INCLUDE	= -I/usr/local/include
+CFLAGS	= $(DEBUG) -Wall $(INCLUDE) -Winline -pipe
 
-LDFLAGS	= -L$(DESTDIR)$(PREFIX)/lib
-LIBS    = -lwiringPi -lwiringPiDev -lpthread -lrt -lm -lcrypt
+LDFLAGS	= -L/usr/local/lib
+LDLIBS    = -lwiringPi -lwiringPiDev -lpthread -lm
 
-# May not need to  alter anything below this line
+# Should not alter anything below this line
 ###############################################################################
 
-SRC	=	gpio.c readall.c pins.c
+SRC	=	scphat.c test.c
 
 OBJ	=	$(SRC:.c=.o)
 
-all:		gpio
+BINS	=	$(SRC:.c=)
 
-version.h:	../VERSION
-	$Q echo Need to run newVersion above.
+all:	$(BINS)
 
-gpio:	$(OBJ)
-	$Q echo [Link]
-	$Q $(CC) -o $@ $(OBJ) $(LDFLAGS) $(LIBS)
+test:	test.o
+	$Q echo [link]
+	$Q $(CC) -o $@ test.o $(LDFLAGS) $(LDLIBS)
+
+scphat:	scphat.o
+	$Q echo [link]
+	$Q $(CC) -o $@ scphat.o $(LDFLAGS) $(LDLIBS)
+
 
 .c.o:
-	$Q echo [Compile] $<
+	$Q echo [CC] $<
 	$Q $(CC) -c $(CFLAGS) $< -o $@
 
-.PHONY:	clean
 clean:
 	$Q echo "[Clean]"
-	$Q rm -f $(OBJ) gpio *~ core tags *.bak
+	$Q rm -f $(OBJ) *~ core tags $(BINS)
 
-.PHONY:	tags
 tags:	$(SRC)
 	$Q echo [ctags]
 	$Q ctags $(SRC)
 
-.PHONY:	install
-install: gpio
-	$Q echo "[Install]"
-	$Q cp gpio		$(DESTDIR)$(PREFIX)/bin
-ifneq ($(WIRINGPI_SUID),0)
-	$Q chown root.root	$(DESTDIR)$(PREFIX)/bin/gpio
-	$Q chmod 4755		$(DESTDIR)$(PREFIX)/bin/gpio
-endif
-	$Q mkdir -p		$(DESTDIR)$(PREFIX)/man/man1
-	$Q cp gpio.1		$(DESTDIR)$(PREFIX)/man/man1
+install:	scphat
+	$Q echo Installing scphat into /usr/local/bin
+	$Q cp -a scphat /usr/local/bin/scphat
+	$Q chmod 755 /usr/local/bin/scphat
+	$Q echo Done. Remember to load the I2C drivers if needed.
 
-
-.PHONY:	uninstall
-uninstall:
-	$Q echo "[UnInstall]"
-	$Q rm -f $(DESTDIR)$(PREFIX)/bin/gpio
-	$Q rm -f $(DESTDIR)$(PREFIX)/man/man1/gpio.1
-
-.PHONY:	depend
 depend:
 	makedepend -Y $(SRC)
 
 # DO NOT DELETE
-
-gpio.o: ../version.h

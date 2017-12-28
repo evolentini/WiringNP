@@ -52,6 +52,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <asm/ioctl.h>
 
 #include "wiringPi.h"
 #include "wiringPiI2C.h"
@@ -221,16 +222,12 @@ int wiringPiI2CSetup (const int devId)
   int rev ;
   const char *device ;
 
-  rev = piBoardRev () ;
-/*modify for BananaPro by LeMaker team*/
-  if (rev == 1) 
+  rev = piGpioLayout () ;
+
+  if (rev == 1)
     device = "/dev/i2c-0" ;
-  else if (rev == 2)
-   device = "/dev/i2c-1" ;
-  else if (rev == 3)
-    device = "/dev/i2c-0"; // guenter fuer orange pi device = "/dev/i2c-2";
-else
-	device = "/dev/i2c-3" ;
+  else
+    device = "/dev/i2c-1" ;
 
   return wiringPiI2CSetupInterface (device, devId) ;
 }

@@ -1,7 +1,8 @@
 /*
- * wiringPiSPI.h:
- *	Simplified SPI access routines
- *	Copyright (c) 2012-2015 Gordon Henderson
+ * pseudoPins.h:
+ *	Extend wiringPi with a number of pseudo pins which can be
+ *	digitally or analog written/read.
+ *	Copyright (c) 2012-2016 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -22,15 +23,4 @@
  ***********************************************************************
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-int wiringPiSPIGetFd     (int channel) ;
-int wiringPiSPIDataRW    (int channel, unsigned char *data, int len) ;
-int wiringPiSPISetupMode (int channel, int speed, int mode) ;
-int wiringPiSPISetup     (int channel, int speed) ;
-
-#ifdef __cplusplus
-}
-#endif
+extern int pseudoPinsSetup (const int pinBase) ;

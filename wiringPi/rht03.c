@@ -1,41 +1,34 @@
 /*
- * maxdetect.c:
- *	Driver for the MaxDetect series sensors
- *
- * Copyright (c) 2013 Gordon Henderson.
+ * rht03.c:
+ *	Extend wiringPi with the rht03 Maxdetect 1-Wire sensor.
+ *	Copyright (c) 2016-2017 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
  *
  *    wiringPi is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
+ *    it under the terms of the GNU Lesser General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
  *
  *    wiringPi is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with wiringPi.  If not, see <http://www.gnu.org/licenses/>.
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with wiringPi.
+ *    If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************
  */
 
 #include <sys/time.h>
 #include <stdio.h>
-//#include <stdlib.h>
-//#include <unistd.h>
+#include <stdio.h>
+#include <time.h>
 
-#include <wiringPi.h>
-
-#include "maxdetect.h"
-
-#ifndef	TRUE
-#  define	TRUE	(1==1)
-#  define	FALSE	(1==2)
-#endif
-
+#include "wiringPi.h"
+#include "rht03.h"
 
 /*
  * maxDetectLowHighWait:
@@ -114,7 +107,7 @@ static unsigned int maxDetectClockByte (const int pin)
  *********************************************************************************
  */
 
-int maxDetectRead (const int pin, unsigned char buffer [4])
+static int maxDetectRead (const int pin, unsigned char buffer [4])
 {
   int i ;
   unsigned int checksum ;
@@ -172,46 +165,20 @@ int maxDetectRead (const int pin, unsigned char buffer [4])
 
 
 /*
- * readRHT03:
+ * myReadRHT03:
  *	Read the Temperature & Humidity from an RHT03 sensor
  *	Values returned are *10, so 123 is 12.3.
  *********************************************************************************
  */
 
-int readRHT03 (const int pin, int *temp, int *rh)
+static int myReadRHT03 (const int pin, int *temp, int *rh)
 {
-  static struct timeval then ;	// will initialise to zero
-  static        int     lastTemp = 0 ;
-  static        int     lastRh   = 0 ;
-
   int result ;
-  struct timeval now, timeOut ;
   unsigned char buffer [4] ;
-
-// The data sheets say to not read more than once every 2 seconds, so you
-//	get the last good reading
-
-  gettimeofday (&now, NULL) ;
-  if (timercmp (&now, &then, <))
-  {
-    *rh   = lastRh ;
-    *temp = lastTemp ;
-    return TRUE ;
-  }
-
-// Set timeout for next read
-
-  gettimeofday (&now, NULL) ;
-  timerclear   (&timeOut) ;
-  timeOut.tv_sec = 2 ;
-  timeradd (&now, &timeOut, &then) ;
 
 // Read ...
   
   result = maxDetectRead (pin, buffer) ;
-
-  if (!result) // Try again, but just once
-    result = maxDetectRead (pin, buffer) ;
 
   if (!result)
     return FALSE ;
@@ -231,8 +198,55 @@ int readRHT03 (const int pin, int *temp, int *rh)
   if ((*rh > 999) || (*temp > 800) || (*temp < -400))
     return FALSE ;
 
-  lastRh   = *rh ;
-  lastTemp = *temp ;
+  return TRUE ;
+}
+
+
+/*
+ * myAnalogRead:
+ *********************************************************************************
+ */
+
+static int myAnalogRead (struct wiringPiNodeStruct *node, int pin)
+{
+  int piPin = node->fd ;
+  int chan  = pin - node->pinBase ;
+  int temp  = -9997 ;
+  int rh    = -9997 ;
+  int try ;
+
+  if (chan > 1)
+    return -9999 ;	// Bad parameters
+
+  for (try = 0 ; try < 10 ; ++try)
+  {
+    if (myReadRHT03 (piPin, &temp, &rh))
+      return chan == 0 ? temp : rh ;
+  }
+
+  return -9998 ;
+}
+
+
+/*
+ * rht03Setup:
+ *	Create a new instance of an RHT03 temperature sensor.
+ *********************************************************************************
+ */
+
+int rht03Setup (const int pinBase, const int piPin)
+{
+  struct wiringPiNodeStruct *node ;
+
+  if ((piPin & PI_GPIO_MASK) != 0)	// Must be an on-board pin
+    return FALSE ;
+  
+// 2 pins - temperature and humidity
+
+  node = wiringPiNewNode (pinBase, 2) ;
+
+  node->fd         = piPin ;
+  node->analogRead = myAnalogRead ;
 
   return TRUE ;
 }

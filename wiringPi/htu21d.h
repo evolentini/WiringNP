@@ -1,7 +1,8 @@
 /*
- * wiringPiSPI.h:
- *	Simplified SPI access routines
- *	Copyright (c) 2012-2015 Gordon Henderson
+ * htu21d.h:
+ *	Extend wiringPi with the HTU21D I2C Humidity and Temperature
+ *	sensor.
+ *	Copyright (c) 2016 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -26,10 +27,7 @@
 extern "C" {
 #endif
 
-int wiringPiSPIGetFd     (int channel) ;
-int wiringPiSPIDataRW    (int channel, unsigned char *data, int len) ;
-int wiringPiSPISetupMode (int channel, int speed, int mode) ;
-int wiringPiSPISetup     (int channel, int speed) ;
+extern int htu21dSetup (const int pinBase) ;
 
 #ifdef __cplusplus
 }

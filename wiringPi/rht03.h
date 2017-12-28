@@ -1,7 +1,7 @@
 /*
- * wiringPiSPI.h:
- *	Simplified SPI access routines
- *	Copyright (c) 2012-2015 Gordon Henderson
+ * rht03.h:
+ *	Extend wiringPi with the rht03 Maxdetect 1-Wire sensor.
+ *	Copyright (c) 2016-2017 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -22,15 +22,4 @@
  ***********************************************************************
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-int wiringPiSPIGetFd     (int channel) ;
-int wiringPiSPIDataRW    (int channel, unsigned char *data, int len) ;
-int wiringPiSPISetupMode (int channel, int speed, int mode) ;
-int wiringPiSPISetup     (int channel, int speed) ;
-
-#ifdef __cplusplus
-}
-#endif
+extern int rht03Setup (const int pinBase, const int devicePin) ;

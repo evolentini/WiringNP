@@ -1,7 +1,7 @@
 /*
- * wiringPiSPI.h:
- *	Simplified SPI access routines
- *	Copyright (c) 2012-2015 Gordon Henderson
+ * drcNet.h:
+ *	Extend wiringPi with the DRC Network protocol (e.g. to another Pi)
+ *	Copyright (c) 2016-2017 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -22,14 +22,20 @@
  ***********************************************************************
  */
 
+/*********
+struct drcNetStruct
+{
+  uint32_t pin ;
+  uint32_t cmd ;
+  uint32_t data ;
+} ;
+**************/
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int wiringPiSPIGetFd     (int channel) ;
-int wiringPiSPIDataRW    (int channel, unsigned char *data, int len) ;
-int wiringPiSPISetupMode (int channel, int speed, int mode) ;
-int wiringPiSPISetup     (int channel, int speed) ;
+extern int drcSetupNet (const int pinBase, const int numPins, const char *ipAddress, const char *port, const char *password) ;
 
 #ifdef __cplusplus
 }
