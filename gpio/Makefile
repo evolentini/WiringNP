@@ -42,7 +42,7 @@ LIBS    = -lwiringPi -lwiringPiDev -lpthread -lrt -lm -lcrypt
 # May not need to  alter anything below this line
 ###############################################################################
 
-SRC	=	gpio.c readall.c pins.c
+SRC	=	gpio.c extensions.c readall.c pins.c
 
 OBJ	=	$(SRC:.c=.o)
 
@@ -93,4 +93,6 @@ depend:
 
 # DO NOT DELETE
 
+gpio.o: extensions.h
+extensions.o: extensions.h
 gpio.o: ../version.h
