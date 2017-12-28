@@ -1220,8 +1220,6 @@ void setPadDrive (int group, int value)
 
 int getAlt (int pin)
 {
-  int fSel, shift, alt ;
-
   pin &= 63 ;
 
   if (pinToGpio == 0 || physToGpio == 0) {
@@ -1397,10 +1395,10 @@ void pinModeAlt (int pin, int mode)
     else if (wiringPiMode != WPI_MODE_GPIO)
       return ;
 
-    fSel  = gpioToGPFSEL [pin] ;
-    shift = gpioToShift  [pin] ;
+    //fSel  = gpioToGPFSEL [pin] ;
+    //shift = gpioToShift  [pin] ;
 
-    *(gpio + fSel) = (*(gpio + fSel) & ~(7 << shift)) | ((mode & 0x7) << shift) ;
+    //*(gpio + fSel) = (*(gpio + fSel) & ~(7 << shift)) | ((mode & 0x7) << shift) ;
   }
 }
 
@@ -1718,7 +1716,7 @@ void digitalWrite (int pin, int value)
  * digitalWrite8:
  *	Set an output 8-bit byte on the device from the given pin number
  *********************************************************************************
- */
+
 void digitalWrite8 (int pin, int value)
 {
   struct wiringPiNodeStruct *node = wiringPiNodes ;
@@ -1731,6 +1729,7 @@ void digitalWrite8 (int pin, int value)
       node->digitalWrite8 (node, pin, value) ;
   }
 }
+ */
 
 
 /*
