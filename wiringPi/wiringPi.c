@@ -1243,9 +1243,7 @@ int getAlt (int pin)
     printf("[%s:L%d] the pin:%d  mode: %d is invaild,please check it over!\n", __func__, __LINE__, pin, wiringPiMode);
     return -1;
   }
-  alt = sunxi_get_gpio_mode(pin);
-  return alt ;
-
+  return sunxi_get_gpio_mode(pin) ;
 }
 
 /*
@@ -1293,6 +1291,8 @@ void pwmSetClock (int divisor)
 
 void gpioClockSet (int pin, int freq)
 {
+  (void) pin;
+  (void) freq;
 }
 
 
@@ -1384,6 +1384,9 @@ struct wiringPiNodeStruct *wiringPiNewNode (int pinBase, int numPins)
 
 void pinModeAlt (int pin, int mode)
 {
+  (void) pin;
+  (void) mode;
+#if (0)
   int fSel, shift ;
 
   if ((pin & PI_GPIO_MASK) == 0)		// On-board pin
@@ -1395,11 +1398,12 @@ void pinModeAlt (int pin, int mode)
     else if (wiringPiMode != WPI_MODE_GPIO)
       return ;
 
-    //fSel  = gpioToGPFSEL [pin] ;
-    //shift = gpioToShift  [pin] ;
+    fSel  = gpioToGPFSEL [pin] ;
+    shift = gpioToShift  [pin] ;
 
-    //*(gpio + fSel) = (*(gpio + fSel) & ~(7 << shift)) | ((mode & 0x7) << shift) ;
+    *(gpio + fSel) = (*(gpio + fSel) & ~(7 << shift)) | ((mode & 0x7) << shift) ;
   }
+#endif
 }
 
 
@@ -1557,7 +1561,7 @@ int digitalRead (int pin)
     /**/ if (wiringPiMode == WPI_MODE_GPIO_SYS)	// Sys mode
     {
       if (wiringPiDebug) 
-	printf("in digitalRead, wiringPiMode == WPI_MODE_GPIO_SYS\n");
+	      printf("in digitalRead, wiringPiMode == WPI_MODE_GPIO_SYS\n");
 
       if (pin == 0) 
       {
@@ -1573,7 +1577,7 @@ int digitalRead (int pin)
       {
         if (wiringPiDebug)
         printf("pin %d sysFds -1.%s,%d\n", pin, __func__, __LINE__);
-	return LOW ;
+	      return LOW ;
       }
       if (wiringPiDebug)
         printf("pin %d :%d.%s,%d\n", pin, sysFds [pin], __func__, __LINE__);
