@@ -1,7 +1,7 @@
 /*
- * wiringPi:
- *	Arduino compatable (ish) Wiring library for the Raspberry Pi
- *	Copyright (c) 2012 Gordon Henderson
+ * wiringPi.h:
+ *	Arduino like Wiring library for the Raspberry Pi.
+ *	Copyright (c) 2012-2017 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -23,6 +23,24 @@
 
 #ifndef	__WIRING_PI_H__
 #define	__WIRING_PI_H__
+
+// C doesn't have true/false by default and I can never remember which
+//	way round they are, so ...
+//	(and yes, I know about stdbool.h but I like capitals for these and I'm old)
+
+#ifndef	TRUE
+#  define	TRUE	(1==1)
+#  define	FALSE	(!TRUE)
+#endif
+
+// GCC warning suppressor
+
+#define	UNU	__attribute__((unused))
+
+// Mask for the bottom 64 pins which belong to the Raspberry Pi
+//	The others are available for the other devices
+
+#define	PI_GPIO_MASK	(0xFFFFFFC0)
 
 // Handy defines
 
