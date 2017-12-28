@@ -1422,7 +1422,7 @@ void pinMode(int pin, int mode) {
 
     if (pinToGpio == 0 || physToGpio == 0) {
         printf("please call wiringPiSetup first.\n");
-        return -1;
+        return;
     }
 
     if ((pin & PI_GPIO_MASK) == 0) // On-board pin
@@ -1553,7 +1553,7 @@ int digitalRead (int pin)
 
   if (pinToGpio == 0 || physToGpio == 0) {
     printf("please call wiringPiSetup first.\n");
-    return;
+    return -1;
   }
 
   if ((pin & PI_GPIO_MASK) == 0)		// On-Board Pin
@@ -1916,10 +1916,10 @@ void digitalWriteByte (const int value)
 
 unsigned int digitalReadByte (void)
 {
-  int pin, x ;
-  uint32_t raw ;
   uint32_t data = 0 ;
 #if (0)
+  int pin, x ;
+  uint32_t raw ;
   /**/ if (wiringPiMode == WPI_MODE_GPIO_SYS)
   {
     for (pin = 0 ; pin < 8 ; ++pin)
@@ -1954,6 +1954,7 @@ unsigned int digitalReadByte (void)
 
 void digitalWriteByte2 (const int value)
 {
+  (void) value;
 #if (0)
   register int mask = 1 ;
   register int pin ;
@@ -1977,10 +1978,10 @@ void digitalWriteByte2 (const int value)
 
 unsigned int digitalReadByte2 (void)
 {
-  int pin, x ;
   uint32_t data = 0 ;
-
 #if (0)
+  int pin, x ;
+
   /**/ if (wiringPiMode == WPI_MODE_GPIO_SYS)
   {
     for (pin = 20 ; pin < 28 ; ++pin)
@@ -2015,7 +2016,7 @@ int waitForInterrupt (int pin, int mS)
 
   if (pinToGpio == 0 || physToGpio == 0) {
     printf("please call wiringPiSetup first.\n");
-    return;
+    return -1;
   }
 
   /**/ if (wiringPiMode == WPI_MODE_PINS)
@@ -2056,6 +2057,7 @@ int waitForInterrupt (int pin, int mS)
  *********************************************************************************
  */
 
+/*
 static void *interruptHandler (UNU void *arg)
 {
   int myPin ;
@@ -2071,7 +2073,7 @@ static void *interruptHandler (UNU void *arg)
 
   return NULL ;
 }
-
+*/
 
 /*
  * wiringPiISR:
@@ -2083,6 +2085,7 @@ static void *interruptHandler (UNU void *arg)
 
 int wiringPiISR (int pin, int mode, void (*function)(void))
 {
+/*
   pthread_t threadId ;
   const char *modeS ;
   char fName   [64] ;
@@ -2091,14 +2094,14 @@ int wiringPiISR (int pin, int mode, void (*function)(void))
   int   count, i ;
   char  c ;
   int   bcmGpioPin ;
-
+*/
   if (pinToGpio == 0 || physToGpio == 0) {
     printf("please call wiringPiSetup first.\n");
     return -1;
   }
 
   return wiringPiFailure(WPI_FATAL, "wiringPiISR: Not implemented");
-
+#if (0)
   if ((pin < 0) || (pin > 63))
     return wiringPiFailure (WPI_FATAL, "wiringPiISR: pin must be 0-63 (%d)\n", pin) ;
 
@@ -2119,7 +2122,7 @@ int wiringPiISR (int pin, int mode, void (*function)(void))
 
     //if (edge[bcmGpioPin] == -1)
         return wiringPiFailure(WPI_FATAL, "wiringPiISR: pin not sunpprt on Nano PI M1 (%d,%d)\n", pin, bcmGpioPin);
-    
+#endif 
 }
 
 /*
@@ -2361,7 +2364,6 @@ int wiringPiSetup (void)
   {
     if ((fd = open ("/dev/gpiomem", O_RDWR | O_SYNC | O_CLOEXEC) ) < 0)
       return wiringPiFailure (WPI_ALMOST, "wiringPiSetup: Unable to open /dev/mem or /dev/gpiomem: %s.\n  Try running with sudo?\n", strerror (errno)) ;
-    piGpioBase = 0 ;
   }
 
 
@@ -2454,6 +2456,7 @@ int wiringPiSetupSys (void)
 {
   int pin ;
   char fName [128] ;
+  int model, rev, mem, maker, overVolted;
 
   static int alreadyDoneThis = FALSE ;
 
