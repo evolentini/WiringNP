@@ -1877,35 +1877,37 @@ static int head2win[8] = {11, 12, 13, 15, 16, 18, 22, 7}; /*add for BananaPro by
 
 void digitalWriteByte (const int value)
 {
-  uint32_t pinSet = 0 ;
-  uint32_t pinClr = 0 ;
-  int mask = 1 ;
-  int pin ;
+  int mask = 1;
+  int pin;
 
-  /**/ if (wiringPiMode == WPI_MODE_GPIO_SYS)
-  {
-    for (pin = 0 ; pin < 8 ; ++pin)
-    {
-      digitalWrite (pinToGpio [pin], value & mask) ;
-      mask <<= 1 ;
-    }
-    return ;
+  if (pinToGpio == 0 || physToGpio == 0) {
+    printf("please call wiringPiSetup first.\n");
+    return;
   }
-  else
-  {
-    for (pin = 0 ; pin < 8 ; ++pin)
-    {
-      if ((value & mask) == 0)
-	pinClr |= (1 << pinToGpio [pin]) ;
-      else
-	pinSet |= (1 << pinToGpio [pin]) ;
 
-      mask <<= 1 ;
+  if (wiringPiMode == WPI_MODE_GPIO_SYS || wiringPiMode == WPI_MODE_GPIO) {
+    for (pin = 0; pin < 8; ++pin) {
+      pinMode(pin, OUTPUT);
+      delay(1);
+      digitalWrite(pinToGpio [pin], value & mask);
+      mask <<= 1;
     }
-
-    *(gpio + gpioToGPCLR [0]) = pinClr ;
-    *(gpio + gpioToGPSET [0]) = pinSet ;
+  } else if (wiringPiMode == WPI_MODE_PINS) {
+    for (pin = 0; pin < 8; ++pin) {
+      pinMode(pin, OUTPUT);
+      delay(1);
+      digitalWrite(pin, value & mask);
+      mask <<= 1;
+    }
+  } else {
+    for (pin = 0; pin < 8; ++pin) {
+      pinMode(head2win[pin], OUTPUT);
+      delay(1);
+      digitalWrite(head2win[pin], value & mask);
+      mask <<= 1;
+    }
   }
+  return;
 }
 
 unsigned int digitalReadByte (void)
@@ -1913,7 +1915,7 @@ unsigned int digitalReadByte (void)
   int pin, x ;
   uint32_t raw ;
   uint32_t data = 0 ;
-
+#if (0)
   /**/ if (wiringPiMode == WPI_MODE_GPIO_SYS)
   {
     for (pin = 0 ; pin < 8 ; ++pin)
@@ -1931,6 +1933,7 @@ unsigned int digitalReadByte (void)
       data = (data << 1) | (((raw & (1 << x)) == 0) ? 0 : 1) ;
     }
   }
+#endif
   return data ;
 }
 
@@ -1947,6 +1950,7 @@ unsigned int digitalReadByte (void)
 
 void digitalWriteByte2 (const int value)
 {
+#if (0)
   register int mask = 1 ;
   register int pin ;
 
@@ -1964,6 +1968,7 @@ void digitalWriteByte2 (const int value)
     *(gpio + gpioToGPCLR [0]) = (~value & 0xFF) << 20 ; // 0x0FF00000; ILJ > CHANGE: Old causes glitch
     *(gpio + gpioToGPSET [0]) = ( value & 0xFF) << 20 ;
   }
+#endif
 }
 
 unsigned int digitalReadByte2 (void)
@@ -1971,6 +1976,7 @@ unsigned int digitalReadByte2 (void)
   int pin, x ;
   uint32_t data = 0 ;
 
+#if (0)
   /**/ if (wiringPiMode == WPI_MODE_GPIO_SYS)
   {
     for (pin = 20 ; pin < 28 ; ++pin)
@@ -1981,6 +1987,7 @@ unsigned int digitalReadByte2 (void)
   }
   else 
     data = ((*(gpio + gpioToGPLEV [0])) >> 20) & 0xFF ; // First bank for these pins
+#endif
 
   return data ;
 }
