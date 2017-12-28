@@ -1107,36 +1107,30 @@ int piBoardRev(void) {
  */
 
 void piBoardId(int *model, int *rev, int *mem, int *maker, int *overVolted) {
-    FILE *cpuFd;
-    char line [120];
-    char *c;
+  int board;
+  (void) piBoardRev(); // Call this first to make sure all's OK. Don't care about the result.
 
-    (void) piBoardRev(); // Call this first to make sure all's OK. Don't care about the result.
-
-    BoardHardwareInfo* retBoardInfo;
-    int boardId;
-    boardId = getBoardType(&retBoardInfo);
-    if (boardId >= 0) {
-        if (boardId > ALLWINNER_BASE && boardId <= ALLWINNER_MAX 
-                && boardId != NanoPi_A64
-                && boardId != NanoPi_NEO_Core) {
-            *model = boardId;
-            *rev = PI_VERSION_1_2;
-            *mem = 1024;
-            *maker = PI_MAKER_FRIENDLYELEC;
-        } else {
-            *model = 0;
-            *rev = 0;
-            *mem = 0;
-            *maker = 0; 
-        }
+  BoardHardwareInfo* retBoardInfo;
+  board = getBoardType(&retBoardInfo);
+  if (board >= 0) {
+    if (board > ALLWINNER_BASE && board <= ALLWINNER_MAX && board != NanoPi_A64 && board != NanoPi_NEO_Core) {
+      *model = board;
+      *rev = PI_VERSION_1_2;
+      *mem = 1024;
+      *maker = PI_MAKER_FRIENDLYELEC;
     } else {
-        *model = 0;
-        *rev = 0;
-        *mem = 0;
-        *maker = 0;
+      *model = 0;
+      *rev = 0;
+      *mem = 0;
+      *maker = 0; 
     }
-    *overVolted = 0;
+  } else {
+    *model = 0;
+    *rev = 0;
+    *mem = 0;
+    *maker = 0;
+  }
+  *overVolted = 0;
 }
 
 /*
@@ -1724,7 +1718,7 @@ void digitalWrite (int pin, int value)
  * digitalWrite8:
  *	Set an output 8-bit byte on the device from the given pin number
  *********************************************************************************
-
+ */
 void digitalWrite8 (int pin, int value)
 {
   struct wiringPiNodeStruct *node = wiringPiNodes ;
@@ -1737,7 +1731,6 @@ void digitalWrite8 (int pin, int value)
       node->digitalWrite8 (node, pin, value) ;
   }
 }
- */
 
 
 /*

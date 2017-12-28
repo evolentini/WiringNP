@@ -111,6 +111,8 @@
 #define	PI_MAKER_EGOMAN		1
 #define	PI_MAKER_EMBEST		2
 #define	PI_MAKER_UNKNOWN	3
+#define PI_MAKER_LEMAKER  4     //add for BananaPro by LeMaker team
+#define PI_MAKER_FRIENDLYELEC 5 //add for FriendlyELEC team 
 
 #define BPRVER 3  //add for BananaPro by lemaker team
 
